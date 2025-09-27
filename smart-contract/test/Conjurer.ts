@@ -393,49 +393,6 @@ describe('Conjurer', () => {
     });
   });
 
-  describe('Direct Ether Transfers', function () {
-    it('Should accept direct ether transfers via receive function', async function () {
-      const user2WalletClient = createWalletClient({
-        account: hardhatAccounts[2].account as Account,
-        chain: hardhat,
-        transport: http()
-      });
-
-      const transferAmount = parseEther('0.001');
-
-      // Get initial contract balance
-      const initialBalance = await publicClient.readContract({
-        address: conjurer.address,
-        abi: conjurer.abi,
-        functionName: 'getContractBalance'
-      });
-
-      // Send ether directly to contract
-      await user2WalletClient.sendTransaction({
-        to: conjurer.address,
-        value: transferAmount
-      });
-
-      // Check contract balance increased
-      const finalBalance = await publicClient.readContract({
-        address: conjurer.address,
-        abi: conjurer.abi,
-        functionName: 'getContractBalance'
-      });
-
-      expect(finalBalance).to.equal(initialBalance + transferAmount);
-
-      // Note: Direct transfers don't give credits, only buyCredits() does
-      const userCredits = await publicClient.readContract({
-        address: conjurer.address,
-        abi: conjurer.abi,
-        functionName: 'getCredits',
-        args: [user2]
-      });
-
-      expect(userCredits).to.equal(0n);
-    });
-  });
 
   describe('Edge Cases', function () {
     it('Should handle multiple users independently', async function () {

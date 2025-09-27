@@ -37,6 +37,27 @@ async fn maximize_window(window: tauri::Window) -> Result<(), String> {
     }
 }
 
+#[tauri::command]
+async fn update_config_address(address: String) -> Result<(), String> {
+    let mut config = watcher::config::ConjurerConfig::load()
+        .map_err(|e| format!("Failed to load config: {}", e))?;
+
+    config
+        .update_address(address)
+        .map_err(|e| format!("Failed to update config: {}", e))?;
+
+    info!("Config address updated successfully");
+    Ok(())
+}
+
+#[tauri::command]
+async fn get_config_address() -> Result<String, String> {
+    let config = watcher::config::ConjurerConfig::load()
+        .map_err(|e| format!("Failed to load config: {}", e))?;
+
+    Ok(config.address)
+}
+
 pub fn webview_window_builder(
     app: &AppHandle,
     window_name: &str,
@@ -152,7 +173,8 @@ pub async fn run() {
             greet,
             close_window,
             minimize_window,
-            maximize_window
+            maximize_window,
+            update_config_address,
         ])
         .build(tauri::generate_context!())
         .expect("error while running tauri application");

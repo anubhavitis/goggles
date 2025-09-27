@@ -87,6 +87,23 @@ function Info() {
     }
   };
 
+  // Function to update the config address when wallet connects
+  const updateConfigAddress = async (newAddress: string) => {
+    try {
+      await invoke("update_config_address", { address: newAddress });
+      console.log("Config address updated successfully");
+    } catch (error) {
+      console.error("Failed to update config address:", error);
+    }
+  };
+
+  // Update config address when wallet connects
+  useEffect(() => {
+    if (isConnected && address) {
+      updateConfigAddress(address);
+    }
+  }, [isConnected, address]);
+
   return (
     <div className="min-h-screen flex flex-col bg-transparent">
       {/* Header */}

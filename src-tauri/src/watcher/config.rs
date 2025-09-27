@@ -1,32 +1,71 @@
 use serde::{Deserialize, Serialize};
+use std::fs;
+use std::path::Path;
 use std::time::{SystemTime, UNIX_EPOCH};
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct ConjurerConfig {
-    pub openai_api_key: String,
-    pub prompt: String,
-    pub openai_model: String,
     pub updated_at: u64,
+    pub address: String,
+}
+
+impl ConjurerConfig {
+    pub fn get_config_address(&self) -> String {
+        self.address.clone()
+    }
+
+    pub fn get_config_path() -> String {
+        if let Some(home_dir) = dirs::home_dir() {
+            let config_dir = home_dir.join(".conjurer");
+            if !config_dir.exists() {
+                let _ = fs::create_dir_all(&config_dir);
+            }
+            config_dir.join("config.json").to_string_lossy().to_string()
+        } else {
+            "config.json".to_string()
+        }
+    }
+
+    pub fn load() -> Result<Self, Box<dyn std::error::Error>> {
+        let config_path = Self::get_config_path();
+        if Path::new(&config_path).exists() {
+            let content = fs::read_to_string(&config_path)?;
+            let config: ConjurerConfig = serde_json::from_str(&content)?;
+            Ok(config)
+        } else {
+            Ok(Self::default())
+        }
+    }
+
+    pub fn save(&self) -> Result<(), Box<dyn std::error::Error>> {
+        let config_path = Self::get_config_path();
+        let content = serde_json::to_string_pretty(self)?;
+        fs::write(&config_path, content)?;
+        Ok(())
+    }
+
+    pub fn update_address(
+        &mut self,
+        new_address: String,
+    ) -> Result<(), Box<dyn std::error::Error>> {
+        self.address = new_address;
+        self.updated_at = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .unwrap()
+            .as_secs();
+        self.save()?;
+        Ok(())
+    }
 }
 
 impl Default for ConjurerConfig {
     fn default() -> Self {
         Self {
-            openai_api_key: String::new(),
-            prompt: r#"Analyze the attached image and generate a short, descriptive filename that clearly reflects its subject, context, and content.
-Rules:
-    1. Use lowercase letters only. Separate words with hyphens. No spaces or underscores.
-    2. Keep the filename between 3 to 8 words. Be concise but meaningful.
-    3. Apply intelligent context recognition:
-        - If it is an album cover, include the album title and band or artist name.
-        - If it is artwork, mention the style (e.g., oil-painting, digital-art, 3d-render).
-        - If it's a poster, include the movie/show/event name.
-    4. Avoid generic terms like "image", "picture", "photo", or "screenshot".
-    5. Do not include the file extension (e.g., .jpg or .png) in the output.
-
-Return only the final filename string, with no extra explanation or punctuation."#.to_string(),
-            openai_model: "gpt-4o".to_string(),
-            updated_at: SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs(),
+            updated_at: SystemTime::now()
+                .duration_since(UNIX_EPOCH)
+                .unwrap()
+                .as_secs(),
+            address: String::new(),
         }
     }
 }

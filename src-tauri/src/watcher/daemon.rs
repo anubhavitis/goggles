@@ -8,7 +8,7 @@ use log::{error, info};
 use notify::{Event, EventKind, RecommendedWatcher, RecursiveMode, Watcher};
 use tokio::signal;
 
-use crate::watcher::{ai::OpenAI, image::SSManager, pid, utils::get_screenshot_dir};
+use crate::watcher::{ai::OpenAI, config, image::SSManager, pid, utils::get_screenshot_dir};
 
 pub async fn daemon(shutdown: Arc<AtomicBool>) {
     let screenshot_dir = get_screenshot_dir();
@@ -37,9 +37,11 @@ pub async fn daemon(shutdown: Arc<AtomicBool>) {
                 {
                     for path in paths {
                         info!("Detected new file: {:?}", path);
-                        let resp = ss_controller
-                            .process_new_ss("placeholder_address".to_string(), &path)
-                            .await;
+                        // get address from config
+                        let config = config::ConjurerConfig::load().unwrap();
+                        let address = config.get_config_address();
+                        info!("Processing file for address: {:?}", address);
+                        let resp = ss_controller.process_new_ss(address, &path).await;
                         if let Err(e) = resp {
                             error!("Error processing file: {:?}", e);
                         }

@@ -1,8 +1,10 @@
 #[cfg(not(target_os = "linux"))]
 use tauri_plugin_positioner::{Position, WindowExt};
+use window_vibrancy::{apply_vibrancy, NSVisualEffectMaterial, NSVisualEffectState};
 
 mod watcher;
 
+use log::info;
 use tauri::{
     menu::{Menu, MenuEvent, MenuItem},
     tray::{MouseButton, MouseButtonState, TrayIcon, TrayIconBuilder, TrayIconEvent},
@@ -32,8 +34,19 @@ pub fn webview_window_builder(
         WebviewWindowBuilder::new(app, window_name, WebviewUrl::External(url.parse().unwrap()))
             .title("Conjurer App")
             .inner_size(width, height)
+            .transparent(true)
+            .decorations(false)
             .build()
             .expect("Failed to create window");
+
+    // Apply vibrancy effect
+    #[cfg(target_os = "macos")]
+    let _ = apply_vibrancy(
+        &window,
+        NSVisualEffectMaterial::HudWindow,
+        Some(NSVisualEffectState::Active),
+        Some(10.0),
+    );
 
     // Position the window
     #[cfg(not(target_os = "linux"))]
@@ -42,9 +55,9 @@ pub fn webview_window_builder(
 
 fn menu_event_handler(_app: &AppHandle, event: MenuEvent) {
     match event.id.as_ref() {
-        "test" => {
-            // create new window with webview of /test
-            webview_window_builder(_app, "test", "http://localhost:1420/test", 800.0, 600.0);
+        "info" => {
+            // create new window with webview of /info
+            webview_window_builder(_app, "info", "http://localhost:1420/info", 800.0, 600.0);
         }
         "quit" => {
             std::process::exit(0);
@@ -84,11 +97,11 @@ fn tray_icon_event_handler(_tray: &TrayIcon, event: TrayIconEvent) {
 }
 
 pub fn tray_setup(app: &tauri::App) -> Result<(), Box<(dyn std::error::Error + 'static)>> {
-    let test_item = MenuItem::with_id(app, "test", "Test", true, None::<&str>)?;
+    let info_item = MenuItem::with_id(app, "info", "Info", true, None::<&str>)?;
     let quit_item = MenuItem::with_id(app, "quit", "Quit", true, None::<&str>)?;
 
     // Create the tray menu
-    let menu = Menu::with_items(app, &[&test_item, &quit_item])?;
+    let menu = Menu::with_items(app, &[&info_item, &quit_item])?;
 
     // Create the system tray
     TrayIconBuilder::with_id("main-tray")
@@ -103,7 +116,13 @@ pub fn tray_setup(app: &tauri::App) -> Result<(), Box<(dyn std::error::Error + '
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
-pub fn run() {
+pub async fn run() {
+    // Start the daemon in a parallel thread when the app starts
+    tokio::spawn(async {
+        info!("Starting Conjurer daemon in background...");
+        watcher::daemon::run().await;
+    });
+
     let app = tauri::Builder::default()
         .plugin(tauri_plugin_autostart::init(Default::default(), None))
         .plugin(tauri_plugin_positioner::init())

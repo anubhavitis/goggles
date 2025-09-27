@@ -1,6 +1,8 @@
 #[cfg(not(target_os = "linux"))]
 use tauri_plugin_positioner::{Position, WindowExt};
 
+mod watcher;
+
 use tauri::{
     menu::{Menu, MenuEvent, MenuItem},
     tray::{MouseButton, MouseButtonState, TrayIcon, TrayIconBuilder, TrayIconEvent},

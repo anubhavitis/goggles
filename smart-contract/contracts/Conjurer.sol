@@ -72,9 +72,4 @@ contract Conjurer {
     function getContractBalance() public view returns (uint256) {
         return address(this).balance;
     }
-    
-    // Fallback function to receive ether
-    receive() external payable {
-        // Allow direct ether transfers to the contract
-    }
 }

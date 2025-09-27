@@ -44,7 +44,7 @@ async function main() {
   
   const contractAddress = process.env.CONTRACT_ADDRESS;
   const targetUser = buyerAccount.address; // User address to decrease credits from
-  const amount = 10; // Amount to decrease
+  const amount = 110; // Amount to decrease
 
   console.log('Contract address:', contractAddress);
   

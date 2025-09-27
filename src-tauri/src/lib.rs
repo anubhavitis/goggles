@@ -17,6 +17,26 @@ fn greet(name: &str) -> String {
     format!("Hello, {}! You've been greeted from Rust!", name)
 }
 
+#[tauri::command]
+async fn close_window(window: tauri::Window) -> Result<(), String> {
+    window.close().map_err(|e| e.to_string())
+}
+
+#[tauri::command]
+async fn minimize_window(window: tauri::Window) -> Result<(), String> {
+    window.minimize().map_err(|e| e.to_string())
+}
+
+#[tauri::command]
+async fn maximize_window(window: tauri::Window) -> Result<(), String> {
+    let is_maximized = window.is_maximized().map_err(|e| e.to_string())?;
+    if is_maximized {
+        window.unmaximize().map_err(|e| e.to_string())
+    } else {
+        window.maximize().map_err(|e| e.to_string())
+    }
+}
+
 pub fn webview_window_builder(
     app: &AppHandle,
     window_name: &str,
@@ -128,7 +148,12 @@ pub async fn run() {
         .plugin(tauri_plugin_positioner::init())
         .setup(|app| tray_setup(app))
         .plugin(tauri_plugin_opener::init())
-        .invoke_handler(tauri::generate_handler![greet])
+        .invoke_handler(tauri::generate_handler![
+            greet,
+            close_window,
+            minimize_window,
+            maximize_window
+        ])
         .build(tauri::generate_context!())
         .expect("error while running tauri application");
 

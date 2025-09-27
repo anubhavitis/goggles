@@ -1,5 +1,5 @@
 import { createPublicClient, createWalletClient, http, defineChain, PublicClient, WalletClient, Chain } from 'viem';
-import { privateKeyToAccount } from 'viem/accounts';
+import { privateKeyToAccount, Account } from 'viem/accounts';
 import conjurerAbi from '../conjurer-abi.json' assert { type: 'json' };
 
 // Define 0G Galileo Testnet chain
@@ -85,12 +85,14 @@ export class ContractService {
       console.log(`Decreasing ${decreaseAmount} credits for user: ${userAddress}`);
       
       const txHash = await this.ownerWalletClient.writeContract({
-        address: this.contractAddress as `0x${string}`,
-        abi: conjurerAbi,
-        functionName: 'decreaseCredits',
-        args: [userAddress as `0x${string}`, decreaseAmount]
+          address: this.contractAddress as `0x${string}`,
+          abi: conjurerAbi,
+          functionName: 'decreaseCredits',
+          args: [userAddress as `0x${string}`, decreaseAmount],
+          chain: zeroGGalileoTestnet,
+          account: this.ownerWalletClient.account as Account
       });
-  
+
       console.log(`Credits decreased. Transaction hash: ${txHash}`);
       return txHash;
     } catch (error) {

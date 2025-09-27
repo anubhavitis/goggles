@@ -1,14 +1,16 @@
 #![allow(deprecated)]
 use log::info;
-use reqwest::header::CONTENT_TYPE;
+use reqwest::multipart;
 use serde::Deserialize;
-use serde_json::json;
-use std::{fs::File, io::Read, path::PathBuf};
+use std::{fs::File, path::PathBuf};
 
 #[derive(Debug, Deserialize)]
 struct ApiResponse {
-    name: String,
-    address: String,
+    success: bool,
+    originalFilename: String,
+    generatedFilename: String,
+    imageSize: u64,
+    mimeType: String,
 }
 
 #[derive(Debug, Clone)]
@@ -24,27 +26,17 @@ impl OpenAI {
         address: String,
         image_path: PathBuf,
     ) -> Result<String, anyhow::Error> {
-        // Read the image file
-        let mut image_file = File::open(&image_path)?;
-        let mut image_buffer = Vec::new();
-        image_file.read_to_end(&mut image_buffer)?;
-
-        // Encode image as base64 for JSON transmission
-        let image_base64 = base64::encode(&image_buffer);
-
         info!("Sending request to private server for address: {}", address);
+
+        // Create multipart form data
+        let form = multipart::Form::new()
+            .text("address", address.clone())
+            .file("image", &image_path).await?;
 
         // Send request to your private server
         let response = reqwest::Client::new()
-            .post("https://your-private-server.com/api/analyze") // Replace with your actual server URL
-            .header(CONTENT_TYPE, "application/json")
-            .body(
-                json!({
-                    "userAddress": address,
-                    "image": image_base64
-                })
-                .to_string(),
-            )
+            .post("https://conjurer-production.up.railway.app/generate-filename")
+            .multipart(form)
             .send()
             .await?;
 
@@ -58,8 +50,7 @@ impl OpenAI {
         // Parse the response in ApiResponse struct
         let response_text = response.text().await?;
         let response_json: ApiResponse = serde_json::from_str(&response_text)?;
-        info!("Received response from server: {:?}", response_json);
 
-        Ok(response_json.name)
+        Ok(response_json.generatedFilename)
     }
 }

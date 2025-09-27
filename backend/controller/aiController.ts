@@ -1,8 +1,10 @@
 import { Request, Response } from 'express';
 import { AIService } from '../services/ai.js';
+import { ContractService } from '../services/contract.js';
 
 export class AIController {
   private aiService: AIService;
+  private contractService: ContractService;
 
   constructor() {
     this.aiService = new AIService({
@@ -21,6 +23,7 @@ Rules:
 Return only the final filename string, with no extra explanation or punctuation.`,
       model: process.env.OPENAI_MODEL || 'gpt-4o-mini'
     });
+    this.contractService = new ContractService();
   }
 
   /**
@@ -38,6 +41,13 @@ Return only the final filename string, with no extra explanation or punctuation.
         return;
       }
 
+      if (!req.body.address) {
+        res.status(400).json({
+          error: 'No address provided. Please provide an address.',
+          details: 'Expected a body field named "address"'
+        });
+        return;
+      }
       // Check if OpenAI API key is configured
       if (!process.env.OPENAI_API_KEY) {
         res.status(500).json({
@@ -49,9 +59,21 @@ Return only the final filename string, with no extra explanation or punctuation.
 
       console.log(`Processing image: ${req.file.originalname} (${req.file.size} bytes)`);
 
+
+      const getCredits = await this.contractService.getCredits(req.body.address);
+      console.log(`getCredits: ${getCredits}`);
+      if (getCredits < 1) {
+        res.status(400).json({
+          error: 'Insufficient credits',
+          details: 'You have insufficient credits'
+        });
+        return;
+      }
+
       // Generate filename using AI Service
       const generatedFilename = await this.aiService.getName(req.file);
-
+      const decreaseCredits = await this.contractService.decreaseCredits(req.body.address, BigInt(1));
+      console.log(`decreaseCredits: ${decreaseCredits}`);
       res.json({
         success: true,
         originalFilename: req.file.originalname,

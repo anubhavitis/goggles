@@ -46,8 +46,7 @@ app.listen(port, () => {
   console.log(`🤖 API endpoint: POST http://localhost:${port}/generate-filename`);
   console.log(`📁 Available routes:`);
   console.log(`   - GET  /health`);
-  console.log(`   - GET  /api/health`);
-  console.log(`   - POST /api/generate-filename`);
+  console.log(`   - POST /generate-filename`);
 });
 
 export default app;

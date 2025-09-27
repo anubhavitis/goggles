@@ -3,6 +3,7 @@ import { useAccount, useReadContract } from "wagmi";
 import { formatEther } from "viem";
 import { invoke } from "@tauri-apps/api/core";
 import ConjurerABI from "./contracts/Conjurer.json";
+import { useEffect } from "react";
 
 // Contract address - you'll need to replace this with your deployed contract address
 const CONJURER_CONTRACT_ADDRESS = "0x516e4ea90cee325c94d87036eb043a067d8b9ef9"; // Replace with actual address

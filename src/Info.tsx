@@ -2,14 +2,13 @@ import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useAccount, useReadContract } from "wagmi";
 import { formatEther } from "viem";
 import { useState, useEffect } from "react";
-import { Window } from "@tauri-apps/api/window";
+import { invoke } from "@tauri-apps/api/core";
 import ConjurerABI from "./contracts/Conjurer.json";
 
 // Contract address - you'll need to replace this with your deployed contract address
 const CONJURER_CONTRACT_ADDRESS = "0x516e4ea90cee325c94d87036eb043a067d8b9ef9"; // Replace with actual address
 
 function Info() {
-  const appWindow = Window.getCurrent();
   const { address, isConnected } = useAccount();
   const [contractData, setContractData] = useState<any>({});
 
@@ -63,21 +62,28 @@ function Info() {
     });
   }, [owner, creditPrice, contractBalance, userCredits, userCreditsMapping]);
 
-  // Window control handlers
+  // Window control handlers - all buttons close the window
   const handleClose = async () => {
-    await appWindow.close();
+    try {
+      await invoke("close_window");
+    } catch (error) {
+      console.error("Failed to close window:", error);
+    }
   };
 
   const handleMinimize = async () => {
-    await appWindow.minimize();
+    try {
+      await invoke("close_window");
+    } catch (error) {
+      console.error("Failed to close window:", error);
+    }
   };
 
   const handleMaximize = async () => {
-    const isMaximized = await appWindow.isMaximized();
-    if (isMaximized) {
-      await appWindow.unmaximize();
-    } else {
-      await appWindow.maximize();
+    try {
+      await invoke("close_window");
+    } catch (error) {
+      console.error("Failed to close window:", error);
     }
   };
 

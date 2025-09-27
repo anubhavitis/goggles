@@ -1,7 +1,6 @@
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useAccount, useReadContract } from "wagmi";
 import { formatEther } from "viem";
-import { useState, useEffect } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import ConjurerABI from "./contracts/Conjurer.json";
 
@@ -10,7 +9,6 @@ const CONJURER_CONTRACT_ADDRESS = "0x516e4ea90cee325c94d87036eb043a067d8b9ef9"; 
 
 function Info() {
   const { address, isConnected } = useAccount();
-  const [contractData, setContractData] = useState<any>({});
 
   // Read all contract functions
   const { data: owner } = useReadContract({
@@ -51,16 +49,6 @@ function Info() {
     },
   });
 
-  // Update contract data when values change
-  useEffect(() => {
-    setContractData({
-      owner: owner as string,
-      creditPrice: creditPrice as bigint,
-      contractBalance: contractBalance as bigint,
-      userCredits: userCredits as bigint,
-      userCreditsMapping: userCreditsMapping as bigint,
-    });
-  }, [owner, creditPrice, contractBalance, userCredits, userCreditsMapping]);
 
   // Window control handlers - all buttons close the window
   const handleClose = async () => {
@@ -105,9 +93,8 @@ function Info() {
   }, [isConnected, address]);
 
   return (
-    <div className="min-h-screen flex flex-col bg-transparent">
-      {/* Header */}
-      <header className="bg-transparent backdrop-blur-md px-8 py-4 flex justify-between items-center border-b border-gray-200/20 dark:border-gray-700/30 shadow-sm">
+    <div className="h-screen flex flex-col bg-transparent">
+      <header className="bg-transparent backdrop-blur-xl px-8 py-4 flex justify-between items-center border-b border-gray-200/20 dark:border-gray-700/30">
         <div className="flex items-center gap-4">
           {/* macOS Window Controls */}
           <div className="flex items-center gap-2">
@@ -133,7 +120,7 @@ function Info() {
               <span className="sr-only">Maximize</span>
             </button>
           </div>
-          <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">
+          <h1 className="text-2xl font-semibold text-black dark:text-white">
             Conjurer
           </h1>
         </div>
@@ -155,11 +142,10 @@ function Info() {
           />
         </div>
       </header>
-
-      {/* Main Content */}
-      <main className="flex-1 p-8 bg-transparent">
+    <div className="h-full overflow-y-scroll flex flex-col bg-transparent"> ̰
+      <main className="flex-1 overflow-y-scroll p-8 bg-transparent">
         <div className="max-w-4xl mx-auto">
-          <h2 className="mb-8 text-3xl font-semibold text-gray-900 dark:text-white">
+          <h2 className="mb-8 text-3xl font-semibold text-black dark:text-white">
             Contract Information
           </h2>
 
@@ -170,21 +156,14 @@ function Info() {
               </p>
             </div>
           ) : (
-            <div className="space-y-6">
+            <div className="flex flex-wrap gap-6 w-full">
               {/* User Information */}
-              <div className="bg-white/10 dark:bg-white/5 backdrop-blur-md border border-gray-200/30 dark:border-gray-700/30 rounded-xl p-6 shadow-lg">
+              <div className="w-1/2 flex-1 min-w-0 bg-white/10 dark:bg-white/5 backdrop-blur-md border border-gray-200/30 dark:border-gray-700/30 rounded-xl p-6 shadow-lg">
                 <h3 className="text-xl font-semibold mb-6 text-blue-600 dark:text-blue-400">
                   User Information
                 </h3>
                 <div className="space-y-4">
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-700 dark:text-gray-300 font-medium">
-                      Connected Address:
-                    </span>
-                    <span className="font-mono text-sm bg-white/20 dark:bg-white/10 border border-gray-200/50 dark:border-gray-600/50 px-3 py-2 rounded-lg shadow-sm">
-                      {address}
-                    </span>
-                  </div>
+                 
                   <div className="flex justify-between items-center">
                     <span className="text-gray-700 dark:text-gray-300 font-medium">
                       User Credits (getCredits):
@@ -210,7 +189,7 @@ function Info() {
               </div>
 
               {/* Contract Information */}
-              <div className="bg-white/10 dark:bg-white/5 backdrop-blur-md border border-gray-200/30 dark:border-gray-700/30 rounded-xl p-6 shadow-lg">
+              <div className="flex-1 min-w-0 bg-white/10 dark:bg-white/5 backdrop-blur-md border border-gray-200/30 dark:border-gray-700/30 rounded-xl p-6 shadow-lg">
                 <h3 className="text-xl font-semibold mb-6 text-emerald-600 dark:text-emerald-400">
                   Contract Information
                 </h3>
@@ -220,7 +199,7 @@ function Info() {
                       Contract Owner:
                     </span>
                     <span className="font-mono text-sm bg-white/20 dark:bg-white/10 border border-gray-200/50 dark:border-gray-600/50 px-3 py-2 rounded-lg shadow-sm">
-                      {owner ? owner.toString() : "Loading..."}
+                      {owner ? `${owner.toString().slice(0, 6)}...${owner.toString().slice(-4)}` : "Loading..."}
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
@@ -245,25 +224,34 @@ function Info() {
                   </div>
                 </div>
               </div>
+            </div>
+          )}
 
-              {/* Raw Data */}
-              <div className="bg-white/10 dark:bg-white/5 backdrop-blur-md border border-gray-200/30 dark:border-gray-700/30 rounded-xl p-6 shadow-lg">
+          {/* Raw Data expandable section */}
+          <div className="mt-8">
+          <div className="flex-1 min-w-0 bg-white/10 dark:bg-white/5 backdrop-blur-md border border-gray-200/30 dark:border-gray-700/30 rounded-xl p-6 shadow-lg">
                 <h3 className="text-xl font-semibold mb-6 text-purple-600 dark:text-purple-400">
                   Raw Contract Data
                 </h3>
                 <pre className="bg-white/20 dark:bg-white/10 border border-gray-200/50 dark:border-gray-600/50 p-4 rounded-lg text-sm overflow-auto shadow-inner">
                   {JSON.stringify(
-                    contractData,
+                    {
+                      owner: owner,
+                      creditPrice: creditPrice,
+                      contractBalance: contractBalance,
+                      userCredits: userCredits,
+                      userCreditsMapping: userCreditsMapping,
+                    },
                     (_, value) =>
                       typeof value === "bigint" ? value.toString() : value,
                     2
                   )}
                 </pre>
               </div>
-            </div>
-          )}
+          </div>
         </div>
       </main>
+    </div>
     </div>
   );
 }

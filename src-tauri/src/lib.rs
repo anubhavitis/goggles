@@ -58,6 +58,30 @@ async fn get_config_address() -> Result<String, String> {
     Ok(config.address)
 }
 
+#[tauri::command]
+async fn get_finder_selection() -> Result<Vec<String>, String> {
+    match watcher::macos::get_finder_selection() {
+        Some(paths) => Ok(paths),
+        None => Ok(vec![]),
+    }
+}
+
+#[tauri::command]
+async fn process_image_with_ai(file_path: String) -> Result<String, String> {
+    let config = watcher::config::ConjurerConfig::load()
+        .map_err(|e| format!("Failed to load config: {}", e))?;
+
+    let ai = watcher::ai::OpenAI::new();
+    let ss_manager = watcher::image::SSManager::new(ai);
+
+    let path = std::path::PathBuf::from(&file_path);
+
+    match ss_manager.process_random_image(config.address, &path).await {
+        Ok(_) => Ok("Image processed successfully".to_string()),
+        Err(e) => Err(format!("Failed to process image: {}", e)),
+    }
+}
+
 pub fn webview_window_builder(
     app: &AppHandle,
     window_name: &str,
@@ -98,7 +122,7 @@ fn menu_event_handler(_app: &AppHandle, event: MenuEvent) {
     match event.id.as_ref() {
         "info" => {
             // create new window with webview of /info
-            webview_window_builder(_app, "info", "http://localhost:1420/info", 800.0, 600.0);
+            webview_window_builder(_app, "info", "http://localhost:1420/info", 600.0, 480.0);
         }
         "quit" => {
             std::process::exit(0);
@@ -175,6 +199,9 @@ pub async fn run() {
             minimize_window,
             maximize_window,
             update_config_address,
+            get_config_address,
+            get_finder_selection,
+            process_image_with_ai
         ])
         .build(tauri::generate_context!())
         .expect("error while running tauri application");

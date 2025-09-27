@@ -8,9 +8,9 @@ use log::{error, info};
 use notify::{Event, EventKind, RecommendedWatcher, RecursiveMode, Watcher};
 use tokio::signal;
 
-use crate::watcher::{ai::OpenAI, config, image::SSManager, pid, utils::get_screenshot_dir};
+use crate::watcher::{ai::OpenAI, image::SSManager, pid, utils::get_screenshot_dir};
 
-async fn daemon(shutdown: Arc<AtomicBool>) {
+pub async fn daemon(shutdown: Arc<AtomicBool>) {
     let screenshot_dir = get_screenshot_dir();
     info!("Conjurer is running on {}", screenshot_dir.display());
 
@@ -22,8 +22,7 @@ async fn daemon(shutdown: Arc<AtomicBool>) {
         .watch(&screenshot_dir, RecursiveMode::NonRecursive)
         .expect("Failed to watch directory");
 
-    let config = config::ConjurerConfig::default();
-    let ai = OpenAI::new(config.openai_api_key, config.prompt, config.openai_model);
+    let ai = OpenAI::new();
     let ss_controller = SSManager::new(ai);
 
     info!("Setup complete, Conjurer is ready!");
@@ -38,7 +37,9 @@ async fn daemon(shutdown: Arc<AtomicBool>) {
                 {
                     for path in paths {
                         info!("Detected new file: {:?}", path);
-                        let resp = ss_controller.process_new_ss(&path).await;
+                        let resp = ss_controller
+                            .process_new_ss("placeholder_address".to_string(), &path)
+                            .await;
                         if let Err(e) = resp {
                             error!("Error processing file: {:?}", e);
                         }

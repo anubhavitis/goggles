@@ -1,11 +1,14 @@
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import { getDefaultConfig, RainbowKitProvider } from "@rainbow-me/rainbowkit";
 import { WagmiProvider } from "wagmi";
-import { sepolia } from "wagmi/chains";
-import { walletConnectWallet } from "@rainbow-me/rainbowkit/wallets";
+import { Chain } from "wagmi/chains";
+import {
+  walletConnectWallet,
+  metaMaskWallet,
+} from "@rainbow-me/rainbowkit/wallets";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import reactLogo from "./assets/react.svg";
-import Test from "./Test";
+import Info from "./Info";
 import "./App.css";
 import "@rainbow-me/rainbowkit/styles.css";
 
@@ -29,7 +32,7 @@ function Home() {
 
       <div className="row">
         <Link
-          to="/test"
+          to="/info"
           style={{
             padding: "10px 20px",
             backgroundColor: "#007acc",
@@ -45,15 +48,27 @@ function Home() {
   );
 }
 
+const zeroGGalileoTestnetManual = {
+  id: 16602,
+  name: "Galileo (Testnet)",
+  nativeCurrency: { name: "0G", symbol: "0G", decimals: 18 },
+  rpcUrls: {
+    default: { http: ["https://evmrpc-testnet.0g.ai"] },
+  },
+  blockExplorers: {
+    default: { name: "0G Explorer", url: "https://chainscan-galileo.0g.ai/" },
+  },
+} as const satisfies Chain;
+
 const config = getDefaultConfig({
   appName: "Conjurer",
   projectId: "YOUR_PROJECT_ID", // You can get this from https://cloud.walletconnect.com
-  chains: [sepolia],
+  chains: [zeroGGalileoTestnetManual],
   ssr: false, // If your dApp uses server side rendering (SSR)
   wallets: [
     {
       groupName: "Recommended",
-      wallets: [walletConnectWallet],
+      wallets: [walletConnectWallet, metaMaskWallet],
     },
   ],
 });
@@ -68,7 +83,7 @@ function App() {
           <Router>
             <Routes>
               <Route path="/" element={<Home />} />
-              <Route path="/test" element={<Test />} />
+              <Route path="/info" element={<Info />} />
             </Routes>
           </Router>
         </RainbowKitProvider>

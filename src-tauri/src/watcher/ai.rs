@@ -1,87 +1,65 @@
 #![allow(deprecated)]
 use log::info;
-use reqwest::header::{AUTHORIZATION, CONTENT_TYPE};
+use reqwest::header::CONTENT_TYPE;
+use serde::Deserialize;
 use serde_json::json;
 use std::{fs::File, io::Read, path::PathBuf};
 
-#[derive(Debug, Clone)]
-pub struct OpenAI {
-    api_key: String,
-    prompt: String,
-    model: String,
+#[derive(Debug, Deserialize)]
+struct ApiResponse {
+    name: String,
+    address: String,
 }
 
+#[derive(Debug, Clone)]
+pub struct OpenAI {}
+
 impl OpenAI {
-    pub fn new(api_key: String, prompt: String, model: String) -> Self {
-        Self {
-            api_key,
-            prompt,
-            model,
-        }
+    pub fn new() -> Self {
+        Self {}
     }
 
-    pub async fn get_name(&self, image_path: &PathBuf) -> String {
-        info!("Getting name for image: {:?}", image_path.display());
-        // Read the image file and base64-encode it
-        let mut file = File::open(image_path).expect("Failed to open image file");
-        let mut buffer = Vec::new();
-        file.read_to_end(&mut buffer)
-            .expect("Failed to read image file");
-        let encoded_image = base64::encode(&buffer);
+    pub async fn get_name(
+        &self,
+        address: String,
+        image_path: PathBuf,
+    ) -> Result<String, anyhow::Error> {
+        // Read the image file
+        let mut image_file = File::open(&image_path)?;
+        let mut image_buffer = Vec::new();
+        image_file.read_to_end(&mut image_buffer)?;
 
-        // Create the JSON payload
-        let payload = json!({
-            "model": self.model,
-            "messages": [
-                    {
-                        "role": "system",
-                        "content": r#"You are a filename generation bot. You must return only a filename based on the attached image. No explanations.
-                         No descriptions. No punctuation. No quotes. No code blocks. Just a lowercase hyphenated filename of 3 to 8 words in plain text."#
-                    },
-                    {
-                        "role": "user",
-                        "content": [
-                    {
-                        "type": "text",
-                        "text": self.prompt
-                    },
-                    {
-                        "type": "image_url",
-                        "image_url": {
-                            "url": format!("data:image/png;base64,{}", encoded_image),
-                            "detail": "low"
-                        }
-                    }
-                ]
-            }
-            ],
-        });
+        // Encode image as base64 for JSON transmission
+        let image_base64 = base64::encode(&image_buffer);
 
-        // Send the request to OpenAI API
-        self.make_ai_request(&payload).await
-    }
+        info!("Sending request to private server for address: {}", address);
 
-    async fn make_ai_request(&self, payload: &serde_json::Value) -> String {
+        // Send request to your private server
         let response = reqwest::Client::new()
-            .post("https://api.openai.com/v1/chat/completions")
-            .header(AUTHORIZATION, format!("Bearer {}", self.api_key))
+            .post("https://your-private-server.com/api/analyze") // Replace with your actual server URL
             .header(CONTENT_TYPE, "application/json")
-            .body(payload.to_string())
+            .body(
+                json!({
+                    "userAddress": address,
+                    "image": image_base64
+                })
+                .to_string(),
+            )
             .send()
-            .await
-            .expect("Failed to send request");
+            .await?;
 
-        // Parse and extract the filename
-        let response_text = response.text().await.expect("Failed to get response text");
-        let response_json: serde_json::Value =
-            serde_json::from_str(&response_text).expect("Failed to parse response");
+        if !response.status().is_success() {
+            return Err(anyhow::anyhow!(
+                "Server returned error status: {}",
+                response.status()
+            ));
+        }
 
-        let name = response_json["choices"][0]["message"]["content"]
-            .as_str()
-            .unwrap_or("unknown-name")
-            .trim()
-            .to_string();
+        // Parse the response in ApiResponse struct
+        let response_text = response.text().await?;
+        let response_json: ApiResponse = serde_json::from_str(&response_text)?;
+        info!("Received response from server: {:?}", response_json);
 
-        name
+        Ok(response_json.name)
     }
 }

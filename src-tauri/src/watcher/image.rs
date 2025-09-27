@@ -58,9 +58,9 @@ impl SSManager {
         Ok(())
     }
 
-    async fn process_ss(&self, path: &PathBuf) -> Result<(), anyhow::Error> {
+    async fn process_ss(&self, address: String, path: &PathBuf) -> Result<(), anyhow::Error> {
         // create new filename
-        let mut new_filename = self.ai.get_name(&path).await;
+        let mut new_filename = self.ai.get_name(address, path.clone()).await?;
         new_filename += ".png";
 
         // create new path
@@ -81,7 +81,11 @@ impl SSManager {
         self.delete_file(&path)
     }
 
-    pub async fn process_new_ss(&self, path: &PathBuf) -> Result<(), anyhow::Error> {
+    pub async fn process_new_ss(
+        &self,
+        address: String,
+        path: &PathBuf,
+    ) -> Result<(), anyhow::Error> {
         if !self.is_screenshot_file(path) {
             return Err(anyhow::anyhow!(
                 "file is not screenshot or not recent: {:?}",
@@ -95,10 +99,14 @@ impl SSManager {
             return Err(anyhow::anyhow!("Skipping old file: {:?}", path));
         }
 
-        self.process_ss(&path).await
+        self.process_ss(address, &path).await
     }
 
-    pub async fn process_random_image(&self, path: &PathBuf) -> Result<(), anyhow::Error> {
+    pub async fn process_random_image(
+        &self,
+        address: String,
+        path: &PathBuf,
+    ) -> Result<(), anyhow::Error> {
         let file_type = match path.extension() {
             Some(ext) => ext.to_str().unwrap(),
             None => return Err(anyhow::anyhow!("Failed to get file extension")),
@@ -107,7 +115,7 @@ impl SSManager {
         let parent = path.parent().unwrap_or(Path::new("."));
 
         println!("Processing image: {:?}", path);
-        let mut new_filename: String = self.ai.get_name(&path).await;
+        let mut new_filename: String = self.ai.get_name(address, path.clone()).await?;
         new_filename += &format!(".{}", file_type);
 
         let new_path = parent.join(new_filename);

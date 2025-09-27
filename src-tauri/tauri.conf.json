@@ -10,9 +10,22 @@
     "frontendDist": "../dist"
   },
   "app": {
-    "windows": [],
+    "windows": [
+      {
+        "title": "conjurer-app",
+        "transparent": true,
+        "decorations": false,
+        "width": 600,
+        "height": 300,
+        "visible": false
+      }
+    ],
+    "macOSPrivateApi": true,
     "security": {
-      "csp": null
+      "csp": null,
+      "capabilities": [
+        "default"
+      ]
     }
   },
   "bundle": {

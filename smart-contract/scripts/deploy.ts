@@ -3,10 +3,29 @@ import { base, baseSepolia, hardhat } from 'viem/chains';
 import hre from 'hardhat';
 import { privateKeyToAccount } from 'viem/accounts';
 import * as dotenv from 'dotenv';
+import { defineChain } from 'viem/utils';
 
 dotenv.config();
 
-const chainToDeploy = hardhat;
+const zeroGGalileoTestnet = defineChain({
+    id: 16602,
+    name: 'Galileo Testnet',
+    nativeCurrency: {
+      name: '0G',
+      symbol: '0G',
+      decimals: 18,
+    },
+    rpcUrls: {
+      default: { http: ['https://evmrpc-testnet.0g.ai'] },
+      public: { http: ['https://evmrpc-testnet.0g.ai'] },
+    },
+    blockExplorers: {
+      default: { name: '0G Explorer', url: 'https://chainscan-galileo.0g.ai' },
+    },
+    testnet: true,
+  });
+
+  const chainToDeploy = zeroGGalileoTestnet;
 
 async function main() {
   console.log('\n=== Starting Conjurer Contract Deployment ===');

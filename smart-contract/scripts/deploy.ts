@@ -28,7 +28,7 @@ const zeroGGalileoTestnet = defineChain({
   const chainToDeploy = zeroGGalileoTestnet;
 
 async function main() {
-  console.log('\n=== Starting Conjurer Contract Deployment ===');
+  console.log('\n=== Starting goggles Contract Deployment ===');
 
   if (!process.env.PRIVATE_KEY) {
     throw new Error('Please set PRIVATE_KEY in your .env file');
@@ -54,41 +54,41 @@ async function main() {
   console.log('Owner address:', owner);
 
   try {
-    // Deploy Conjurer contract
-    console.log('\nDeploying Conjurer contract...');
-    const { abi: conjurerAbi, bytecode: conjurerBytecode } = await hre.artifacts.readArtifact('Conjurer');
+    // Deploy goggles contract
+    console.log('\nDeploying goggles contract...');
+    const { abi: gogglesAbi, bytecode: gogglesBytecode } = await hre.artifacts.readArtifact('Goggles');
     
-    const conjurerHash = await walletClient.deployContract({
-      abi: conjurerAbi,
-      bytecode: conjurerBytecode as `0x${string}`,
-      args: [] // Conjurer contract has no constructor arguments
+    const gogglesHash = await walletClient.deployContract({
+      abi: gogglesAbi,
+      bytecode: gogglesBytecode as `0x${string}`,
+      args: [] // goggles contract has no constructor arguments
     });
     
-    const conjurerReceipt = await publicClient.waitForTransactionReceipt({ hash: conjurerHash });
+    const gogglesReceipt = await publicClient.waitForTransactionReceipt({ hash: gogglesHash });
     
-    if (!conjurerReceipt.contractAddress) {
-      throw new Error('Conjurer deployment failed - no contract address in receipt');
+    if (!gogglesReceipt.contractAddress) {
+      throw new Error('goggles deployment failed - no contract address in receipt');
     }
     
-    const conjurer = {
-      address: conjurerReceipt.contractAddress,
-      abi: conjurerAbi
+    const goggles = {
+      address: gogglesReceipt.contractAddress,
+      abi: gogglesAbi
     };
     
-    console.log('Conjurer deployed at:', conjurer.address);
+    console.log('goggles deployed at:', goggles.address);
 
     // Verify deployment by reading initial state
     console.log('\nVerifying deployment...');
     const contractOwner = await publicClient.readContract({
-      address: conjurer.address,
-      abi: conjurer.abi,
+      address: goggles.address,
+      abi: goggles.abi,
       functionName: 'owner',
       args: []
     });
     
     const creditPrice = await publicClient.readContract({
-      address: conjurer.address,
-      abi: conjurer.abi,
+      address: goggles.address,
+      abi: goggles.abi,
       functionName: 'creditPrice',
       args: []
     });
@@ -98,10 +98,10 @@ async function main() {
 
     console.log('\n=== Deployment Summary ===');
     console.log('Chain:', chainToDeploy.name);
-    console.log('Conjurer Address:', conjurer.address);
+    console.log('goggles Address:', goggles.address);
     console.log('Owner Address:', owner);
     console.log('Credit Price:', creditPrice.toString(), 'wei (0.0001 ETH)');
-    console.log('Transaction Hash:', conjurerHash);
+    console.log('Transaction Hash:', gogglesHash);
 
   } catch (error) {
     console.error('Error during contract deployment:', error);

@@ -29,7 +29,7 @@ const zeroGGalileoTestnet = defineChain({
   const chainToUse = zeroGGalileoTestnet;
 
 async function main() {
-  console.log('\n=== Buying Credits from Conjurer Contract ===');
+  console.log('\n=== Buying Credits from goggles Contract ===');
 
   if (!process.env.BUYER_PRIVATE_KEY) {
     throw new Error('Please set PRIVATE_KEY in your .env file');
@@ -44,7 +44,7 @@ async function main() {
   const buyerAccount = privateKeyToAccount(process.env.BUYER_PRIVATE_KEY as `0x${string}`);
 
   // Get amount to spend from command line argument (optional, defaults to 0.001 ETH)
-  const ethAmount = '0.01';
+  const ethAmount = '0.001';
   const weiAmount = parseEther(ethAmount);
 
   console.log('Contract address:', contractAddress);
@@ -69,13 +69,13 @@ async function main() {
   
   try {
     // Get contract ABI
-    const { abi: conjurerAbi } = await hre.artifacts.readArtifact('Conjurer');
+    const { abi: gogglesAbi } = await hre.artifacts.readArtifact('Goggles');
 
     // Check current credit balance before purchase
     console.log('\nChecking current credit balance...');
     const currentCredits = await publicClient.readContract({
       address: contractAddress as `0x${string}`,
-      abi: conjurerAbi,
+      abi: gogglesAbi,
       functionName: 'getCredits',
       args: [buyerAccount.address]
     });
@@ -85,7 +85,7 @@ async function main() {
     // Check credit price
     const creditPrice = await publicClient.readContract({
       address: contractAddress as `0x${string}`,
-      abi: conjurerAbi,
+      abi: gogglesAbi,
       functionName: 'creditPrice',
       args: []
     });
@@ -94,14 +94,15 @@ async function main() {
     console.log('Credit price in ETH:', parseFloat(creditPrice.toString()) / 1e18);
 
     // Calculate expected credits
-    const expectedCredits = weiAmount / creditPrice;
+    // Ensure both weiAmount and creditPrice are BigInt for division
+    const expectedCredits = (BigInt(weiAmount.toString()) / BigInt(creditPrice.toString()));
     console.log('Expected credits to receive:', expectedCredits.toString());
 
     // Buy credits
     console.log('\nBuying credits...');
     const buyCreditsHash = await buyerWalletClient.writeContract({
       address: contractAddress as `0x${string}`,
-      abi: conjurerAbi,
+      abi: gogglesAbi,
       functionName: 'buyCredits',
       args: [],
       value: weiAmount
@@ -117,7 +118,7 @@ async function main() {
     console.log('\nChecking new credit balance...');
     const newCredits = await publicClient.readContract({
       address: contractAddress as `0x${string}`,
-      abi: conjurerAbi,
+      abi: gogglesAbi,
       functionName: 'getCredits',
       args: [buyerAccount.address]
     });

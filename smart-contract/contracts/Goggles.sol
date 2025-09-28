@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.28;
 
-contract Conjurer {
+contract Goggles {
     // State variables
     address public owner;
     mapping(address => uint256) public userCredits;

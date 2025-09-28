@@ -29,7 +29,7 @@ const zeroGGalileoTestnet = defineChain({
   const chainToUse = zeroGGalileoTestnet;
 
 async function main() {
-  console.log('\n=== Withdrawing Funds from Conjurer Contract ===');
+  console.log('\n=== Withdrawing Funds from Goggles Contract ===');
 
   if (!process.env.PRIVATE_KEY) {
     throw new Error('Please set PRIVATE_KEY in your .env file');
@@ -68,7 +68,7 @@ async function main() {
   
   try {
     // Get contract ABI
-    const { abi: conjurerAbi } = await hre.artifacts.readArtifact('Conjurer');
+    const { abi: gogglesAbi } = await hre.artifacts.readArtifact('Goggles');
 
     // Check current contract balance
     const initialContractBalance = await publicClient.getBalance({
@@ -79,7 +79,7 @@ async function main() {
     // Withdraw funds
     const withdrawHash = await ownerWalletClient.writeContract({
       address: contractAddress as `0x${string}`,
-      abi: conjurerAbi,
+      abi: gogglesAbi,
       functionName: 'withdraw'
     });
 

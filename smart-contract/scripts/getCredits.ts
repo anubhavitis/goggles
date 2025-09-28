@@ -29,7 +29,7 @@ const zeroGGalileoTestnet = defineChain({
   const chainToUse = zeroGGalileoTestnet;
 
 async function main() {
-  console.log('\n=== Conjurer Contract Credit Management ===');
+  console.log('\n=== Goggles Contract Credit Management ===');
 
   if (!process.env.PRIVATE_KEY) {
     throw new Error('Please set PRIVATE_KEY in your .env file');
@@ -44,7 +44,7 @@ async function main() {
   
   const contractAddress = process.env.CONTRACT_ADDRESS;
   const targetUser = buyerAccount.address; // User address to decrease credits from
-  const amount = 110; // Amount to decrease
+  const amount = 5; // Amount to decrease
 
   console.log('Contract address:', contractAddress);
   
@@ -69,7 +69,7 @@ async function main() {
 
   try {
     // Get contract ABI
-    const { abi: conjurerAbi } = await hre.artifacts.readArtifact('Conjurer');
+    const { abi: gogglesAbi } = await hre.artifacts.readArtifact('Goggles');
 
     const decreaseAmount = BigInt(amount);
 
@@ -81,7 +81,7 @@ async function main() {
     console.log('\n1. Getting initial credit balance...');
     const initialCredits = await publicClient.readContract({
       address: contractAddress as `0x${string}`,
-      abi: conjurerAbi,
+      abi: gogglesAbi,
       functionName: 'getCredits',
       args: [targetUser as `0x${string}`]
     });
@@ -97,7 +97,7 @@ async function main() {
     console.log('\n2. Decreasing credits...');
     const decreaseHash = await ownerWalletClient.writeContract({
       address: contractAddress as `0x${string}`,
-      abi: conjurerAbi,
+      abi: gogglesAbi,
       functionName: 'decreaseCredits',
       args: [targetUser as `0x${string}`, decreaseAmount]
     });
@@ -112,7 +112,7 @@ async function main() {
     console.log('\n3. Getting final credit balance...');
     const finalCredits = await publicClient.readContract({
       address: contractAddress as `0x${string}`,
-      abi: conjurerAbi,
+      abi: gogglesAbi,
       functionName: 'getCredits',
       args: [targetUser as `0x${string}`]
     });

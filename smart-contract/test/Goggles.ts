@@ -4,10 +4,10 @@ import { hardhat } from 'viem/chains';
 import hre from 'hardhat';
 import { Account } from 'viem/accounts';
 
-describe('Conjurer', () => {
+describe('Goggles', () => {
   let publicClient: any;
   let walletClient: any;
-  let conjurer: any;
+  let goggles: any;
   let owner: `0x${string}`;
   let user1: `0x${string}`;
   let user2: `0x${string}`;
@@ -39,27 +39,27 @@ describe('Conjurer', () => {
     console.log('User2 address:', user2);
 
     try {
-      // Deploy Conjurer contract
-      console.log('\nDeploying Conjurer contract...');
-      const { abi: conjurerAbi, bytecode: conjurerBytecode } = await hre.artifacts.readArtifact('Conjurer');
+      // Deploy Goggles contract
+      console.log('\nDeploying Goggles contract...');
+      const { abi: gogglesAbi, bytecode: gogglesBytecode } = await hre.artifacts.readArtifact('Goggles');
       
-      const conjurerHash = await walletClient.deployContract({
-        abi: conjurerAbi,
-        bytecode: conjurerBytecode as `0x${string}`
+      const gogglesHash = await walletClient.deployContract({
+        abi: gogglesAbi,
+        bytecode: gogglesBytecode as `0x${string}`
       });
       
-      const conjurerReceipt = await publicClient.waitForTransactionReceipt({ hash: conjurerHash });
+      const gogglesReceipt = await publicClient.waitForTransactionReceipt({ hash: gogglesHash });
       
-      if (!conjurerReceipt.contractAddress) {
-        throw new Error('Conjurer deployment failed - no contract address in receipt');
+      if (!gogglesReceipt.contractAddress) {
+        throw new Error('Goggles deployment failed - no contract address in receipt');
       }
       
-      conjurer = {
-        address: conjurerReceipt.contractAddress,
-        abi: conjurerAbi
+      goggles = {
+        address: gogglesReceipt.contractAddress,
+        abi: gogglesAbi
       };
       
-      console.log('Conjurer deployed at:', conjurer.address);
+      console.log('Goggles deployed at:', goggles.address);
 
     } catch (error) {
       console.error('Error during contract deployment:', error);
@@ -70,8 +70,8 @@ describe('Conjurer', () => {
   describe('Deployment', function () {
     it('Should set the right owner', async function () {
       const contractOwner = await publicClient.readContract({
-        address: conjurer.address,
-        abi: conjurer.abi,
+        address: goggles.address,
+        abi: goggles.abi,
         functionName: 'owner'
       });
       expect(contractOwner.toLowerCase()).to.equal(owner.toLowerCase());
@@ -79,8 +79,8 @@ describe('Conjurer', () => {
 
     it('Should set the correct credit price', async function () {
       const creditPrice = await publicClient.readContract({
-        address: conjurer.address,
-        abi: conjurer.abi,
+        address: goggles.address,
+        abi: goggles.abi,
         functionName: 'creditPrice'
       });
       expect(creditPrice).to.equal(parseEther('0.0001'));
@@ -88,8 +88,8 @@ describe('Conjurer', () => {
 
     it('Should have zero initial balance', async function () {
       const balance = await publicClient.readContract({
-        address: conjurer.address,
-        abi: conjurer.abi,
+        address: goggles.address,
+        abi: goggles.abi,
         functionName: 'getContractBalance'
       });
       expect(balance).to.equal(0n);
@@ -109,16 +109,16 @@ describe('Conjurer', () => {
 
       // Buy credits
       await user1WalletClient.writeContract({
-        address: conjurer.address,
-        abi: conjurer.abi,
+        address: goggles.address,
+        abi: goggles.abi,
         functionName: 'buyCredits',
         value: purchaseAmount
       });
 
       // Check user's credit balance
       const userCredits = await publicClient.readContract({
-        address: conjurer.address,
-        abi: conjurer.abi,
+        address: goggles.address,
+        abi: goggles.abi,
         functionName: 'getCredits',
         args: [user1]
       });
@@ -127,8 +127,8 @@ describe('Conjurer', () => {
 
       // Check contract balance
       const contractBalance = await publicClient.readContract({
-        address: conjurer.address,
-        abi: conjurer.abi,
+        address: goggles.address,
+        abi: goggles.abi,
         functionName: 'getContractBalance'
       });
 
@@ -147,24 +147,24 @@ describe('Conjurer', () => {
 
       // Get initial credits
       const initialCredits = await publicClient.readContract({
-        address: conjurer.address,
-        abi: conjurer.abi,
+        address: goggles.address,
+        abi: goggles.abi,
         functionName: 'getCredits',
         args: [user1]
       });
 
       // Buy more credits
       await user1WalletClient.writeContract({
-        address: conjurer.address,
-        abi: conjurer.abi,
+        address: goggles.address,
+        abi: goggles.abi,
         functionName: 'buyCredits',
         value: purchaseAmount
       });
 
       // Check updated credit balance
       const finalCredits = await publicClient.readContract({
-        address: conjurer.address,
-        abi: conjurer.abi,
+        address: goggles.address,
+        abi: goggles.abi,
         functionName: 'getCredits',
         args: [user1]
       });
@@ -183,8 +183,8 @@ describe('Conjurer', () => {
 
       await expect(
         user2WalletClient.writeContract({
-          address: conjurer.address,
-          abi: conjurer.abi,
+          address: goggles.address,
+          abi: goggles.abi,
           functionName: 'buyCredits',
           value: insufficientAmount
         })
@@ -200,8 +200,8 @@ describe('Conjurer', () => {
 
       await expect(
         user2WalletClient.writeContract({
-          address: conjurer.address,
-          abi: conjurer.abi,
+          address: goggles.address,
+          abi: goggles.abi,
           functionName: 'buyCredits',
           value: 0n
         })
@@ -215,24 +215,24 @@ describe('Conjurer', () => {
 
       // Get initial credits
       const initialCredits = await publicClient.readContract({
-        address: conjurer.address,
-        abi: conjurer.abi,
+        address: goggles.address,
+        abi: goggles.abi,
         functionName: 'getCredits',
         args: [user1]
       });
 
       // Decrease credits
       await walletClient.writeContract({
-        address: conjurer.address,
-        abi: conjurer.abi,
+        address: goggles.address,
+        abi: goggles.abi,
         functionName: 'decreaseCredits',
         args: [user1, decreaseAmount]
       });
 
       // Check updated credits
       const finalCredits = await publicClient.readContract({
-        address: conjurer.address,
-        abi: conjurer.abi,
+        address: goggles.address,
+        abi: goggles.abi,
         functionName: 'getCredits',
         args: [user1]
       });
@@ -245,8 +245,8 @@ describe('Conjurer', () => {
 
       await expect(
         walletClient.writeContract({
-          address: conjurer.address,
-          abi: conjurer.abi,
+          address: goggles.address,
+          abi: goggles.abi,
           functionName: 'decreaseCredits',
           args: [user1, excessiveAmount]
         })
@@ -262,8 +262,8 @@ describe('Conjurer', () => {
 
       await expect(
         user1WalletClient.writeContract({
-          address: conjurer.address,
-          abi: conjurer.abi,
+          address: goggles.address,
+          abi: goggles.abi,
           functionName: 'decreaseCredits',
           args: [user2, 1n]
         })
@@ -273,8 +273,8 @@ describe('Conjurer', () => {
     it('Should reject decreasing zero credits', async function () {
       await expect(
         walletClient.writeContract({
-          address: conjurer.address,
-          abi: conjurer.abi,
+          address: goggles.address,
+          abi: goggles.abi,
           functionName: 'decreaseCredits',
           args: [user1, 0n]
         })
@@ -289,22 +289,22 @@ describe('Conjurer', () => {
 
       // Get contract balance
       const contractBalance = await publicClient.readContract({
-        address: conjurer.address,
-        abi: conjurer.abi,
+        address: goggles.address,
+        abi: goggles.abi,
         functionName: 'getContractBalance'
       });
 
       // Withdraw funds
       await walletClient.writeContract({
-        address: conjurer.address,
-        abi: conjurer.abi,
+        address: goggles.address,
+        abi: goggles.abi,
         functionName: 'withdraw'
       });
 
       // Check contract balance is now zero
       const finalContractBalance = await publicClient.readContract({
-        address: conjurer.address,
-        abi: conjurer.abi,
+        address: goggles.address,
+        abi: goggles.abi,
         functionName: 'getContractBalance'
       });
 
@@ -318,8 +318,8 @@ describe('Conjurer', () => {
     it('Should reject withdrawal when no funds available', async function () {
       await expect(
         walletClient.writeContract({
-          address: conjurer.address,
-          abi: conjurer.abi,
+          address: goggles.address,
+          abi: goggles.abi,
           functionName: 'withdraw'
         })
       ).to.be.rejectedWith(/No funds to withdraw/);
@@ -334,8 +334,8 @@ describe('Conjurer', () => {
 
       await expect(
         user1WalletClient.writeContract({
-          address: conjurer.address,
-          abi: conjurer.abi,
+          address: goggles.address,
+          abi: goggles.abi,
           functionName: 'withdraw'
         })
       ).to.be.rejectedWith(/Only owner can call this function/);
@@ -347,15 +347,15 @@ describe('Conjurer', () => {
       const newPrice = parseEther('0.0002');
 
       await walletClient.writeContract({
-        address: conjurer.address,
-        abi: conjurer.abi,
+        address: goggles.address,
+        abi: goggles.abi,
         functionName: 'setCreditPrice',
         args: [newPrice]
       });
 
       const updatedPrice = await publicClient.readContract({
-        address: conjurer.address,
-        abi: conjurer.abi,
+        address: goggles.address,
+        abi: goggles.abi,
         functionName: 'creditPrice'
       });
 
@@ -373,8 +373,8 @@ describe('Conjurer', () => {
 
       await expect(
         user1WalletClient.writeContract({
-          address: conjurer.address,
-          abi: conjurer.abi,
+          address: goggles.address,
+          abi: goggles.abi,
           functionName: 'setCreditPrice',
           args: [newPrice]
         })
@@ -384,8 +384,8 @@ describe('Conjurer', () => {
     it('Should reject setting zero credit price', async function () {
       await expect(
         walletClient.writeContract({
-          address: conjurer.address,
-          abi: conjurer.abi,
+          address: goggles.address,
+          abi: goggles.abi,
           functionName: 'setCreditPrice',
           args: [0n]
         })
@@ -400,8 +400,8 @@ describe('Conjurer', () => {
         const newPrice = parseEther('0.0001');
 
       await walletClient.writeContract({
-        address: conjurer.address,
-        abi: conjurer.abi,
+        address: goggles.address,
+        abi: goggles.abi,
         functionName: 'setCreditPrice',
         args: [newPrice]
       });
@@ -416,23 +416,23 @@ describe('Conjurer', () => {
 
       // User2 buys credits
       await user2WalletClient.writeContract({
-        address: conjurer.address,
-        abi: conjurer.abi,
+        address: goggles.address,
+        abi: goggles.abi,
         functionName: 'buyCredits',
         value: purchaseAmount
       });
 
       // Check both users have correct credits
       const user1Credits = await publicClient.readContract({
-        address: conjurer.address,
-        abi: conjurer.abi,
+        address: goggles.address,
+        abi: goggles.abi,
         functionName: 'getCredits',
         args: [user1]
       });
 
       const user2Credits = await publicClient.readContract({
-        address: conjurer.address,
-        abi: conjurer.abi,
+        address: goggles.address,
+        abi: goggles.abi,
         functionName: 'getCredits',
         args: [user2]
       });
@@ -455,8 +455,8 @@ describe('Conjurer', () => {
 
       await expect(
         user2WalletClient.writeContract({
-          address: conjurer.address,
-          abi: conjurer.abi,
+          address: goggles.address,
+          abi: goggles.abi,
           functionName: 'buyCredits',
           value: purchaseAmount
         })

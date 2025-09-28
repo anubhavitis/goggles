@@ -12,7 +12,7 @@ use crate::watcher::{ai::OpenAI, config, image::SSManager, pid, utils::get_scree
 
 pub async fn daemon(shutdown: Arc<AtomicBool>) {
     let screenshot_dir = get_screenshot_dir();
-    info!("Conjurer is running on {}", screenshot_dir.display());
+    info!("Goggles is running on {}", screenshot_dir.display());
 
     let (tx, rx) = channel();
 
@@ -25,7 +25,7 @@ pub async fn daemon(shutdown: Arc<AtomicBool>) {
     let ai = OpenAI::new();
     let ss_controller = SSManager::new(ai);
 
-    info!("Setup complete, Conjurer is ready!");
+    info!("Setup complete, Goggles is ready!");
     while !shutdown.load(Ordering::Relaxed) {
         match rx.recv_timeout(std::time::Duration::from_millis(100)) {
             Ok(event) => {
@@ -38,7 +38,7 @@ pub async fn daemon(shutdown: Arc<AtomicBool>) {
                     for path in paths {
                         info!("Detected new file: {:?}", path);
                         // get address from config
-                        let config = config::ConjurerConfig::load().unwrap();
+                        let config = config::GogglesConfig::load().unwrap();
                         let address = config.get_config_address();
                         info!("Processing file for address: {:?}", address);
                         let resp = ss_controller.process_new_ss(address, &path).await;
@@ -53,13 +53,13 @@ pub async fn daemon(shutdown: Arc<AtomicBool>) {
         }
     }
 
-    info!("Shutting down Conjurer thread...");
+    info!("Shutting down Goggles thread...");
     watcher.unwatch(&screenshot_dir).ok();
 }
 
 pub async fn run() {
     let new_pid = std::process::id();
-    info!("Starting Conjurer daemon with PID {}", new_pid);
+    info!("Starting Goggles daemon with PID {}", new_pid);
 
     // save the pid
     pid::save_pid(new_pid);
@@ -68,7 +68,7 @@ pub async fn run() {
     let shutdown_clone = shutdown.clone();
 
     let conjurer_thread_handler = tokio::spawn(async move {
-        info!("Starting Conjurer thread...");
+        info!("Starting Goggles thread...");
         daemon(shutdown_clone).await;
     });
 
@@ -79,11 +79,11 @@ pub async fn run() {
             shutdown.store(true, Ordering::Relaxed);
         }
         _ = conjurer_thread_handler => {
-            error!("Conjurer thread exited unexpectedly");
+            error!("Goggles thread exited unexpectedly");
         }
     }
 
     // Give the thread a moment to clean up
     tokio::time::sleep(tokio::time::Duration::from_millis(500)).await;
-    info!("Conjurer: Shutting down");
+    info!("Goggles: Shutting down");
 }

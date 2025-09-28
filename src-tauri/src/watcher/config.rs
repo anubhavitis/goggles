@@ -4,12 +4,12 @@ use std::path::Path;
 use std::time::{SystemTime, UNIX_EPOCH};
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct ConjurerConfig {
+pub struct GogglesConfig {
     pub updated_at: u64,
     pub address: String,
 }
 
-impl ConjurerConfig {
+impl GogglesConfig {
     pub fn get_config_address(&self) -> String {
         self.address.clone()
     }
@@ -30,7 +30,7 @@ impl ConjurerConfig {
         let config_path = Self::get_config_path();
         if Path::new(&config_path).exists() {
             let content = fs::read_to_string(&config_path)?;
-            let config: ConjurerConfig = serde_json::from_str(&content)?;
+            let config: GogglesConfig = serde_json::from_str(&content)?;
             Ok(config)
         } else {
             Ok(Self::default())
@@ -58,7 +58,7 @@ impl ConjurerConfig {
     }
 }
 
-impl Default for ConjurerConfig {
+impl Default for GogglesConfig {
     fn default() -> Self {
         Self {
             updated_at: SystemTime::now()

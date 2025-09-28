@@ -9,7 +9,7 @@ import { useState, useEffect } from "react";
 import ConjurerABI from "../contracts/Conjurer.json";
 
 // Contract address
-export const CONJURER_CONTRACT_ADDRESS =
+export const GOGGLES_CONTRACT_ADDRESS =
   "0x516e4ea90cee325c94d87036eb043a067d8b9ef9";
 
 // Query keys for caching
@@ -24,7 +24,7 @@ export const CONJURER_QUERY_KEYS = {
 // Combined hook for all contract data with 5-second refresh
 export function useConjurerContractData(address: string | undefined) {
   const owner = useReadContract({
-    address: CONJURER_CONTRACT_ADDRESS as `0x${string}`,
+    address: GOGGLES_CONTRACT_ADDRESS as `0x${string}`,
     abi: ConjurerABI,
     functionName: "owner",
     query: {
@@ -33,7 +33,7 @@ export function useConjurerContractData(address: string | undefined) {
   });
 
   const creditPrice = useReadContract({
-    address: CONJURER_CONTRACT_ADDRESS as `0x${string}`,
+    address: GOGGLES_CONTRACT_ADDRESS as `0x${string}`,
     abi: ConjurerABI,
     functionName: "creditPrice",
     query: {
@@ -42,7 +42,7 @@ export function useConjurerContractData(address: string | undefined) {
   });
 
   const contractBalance = useReadContract({
-    address: CONJURER_CONTRACT_ADDRESS as `0x${string}`,
+    address: GOGGLES_CONTRACT_ADDRESS as `0x${string}`,
     abi: ConjurerABI,
     functionName: "getContractBalance",
     query: {
@@ -51,7 +51,7 @@ export function useConjurerContractData(address: string | undefined) {
   });
 
   const userCredits = useReadContract({
-    address: CONJURER_CONTRACT_ADDRESS as `0x${string}`,
+    address: GOGGLES_CONTRACT_ADDRESS as `0x${string}`,
     abi: ConjurerABI,
     functionName: "getCredits",
     args: address ? [address] : undefined,
@@ -62,7 +62,7 @@ export function useConjurerContractData(address: string | undefined) {
   });
 
   const userCreditsMapping = useReadContract({
-    address: CONJURER_CONTRACT_ADDRESS as `0x${string}`,
+    address: GOGGLES_CONTRACT_ADDRESS as `0x${string}`,
     abi: ConjurerABI,
     functionName: "userCredits",
     args: address ? [address] : undefined,
@@ -141,7 +141,7 @@ export function useBuyCreditsWithWait(address: string | undefined) {
 
     try {
       const hash = await writeContractAsync({
-        address: CONJURER_CONTRACT_ADDRESS as `0x${string}`,
+        address: GOGGLES_CONTRACT_ADDRESS as `0x${string}`,
         abi: ConjurerABI,
         functionName: "buyCredits",
         value: creditPrice * 10n,

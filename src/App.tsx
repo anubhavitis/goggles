@@ -69,7 +69,7 @@ const zeroGGalileoTestnetManual = {
 } as const satisfies Chain;
 
 const config = getDefaultConfig({
-  appName: "Conjurer",
+  appName: "Goggles",
   projectId: "YOUR_PROJECT_ID", // You can get this from https://cloud.walletconnect.com
   chains: [zeroGGalileoTestnetManual],
   ssr: false, // If your dApp uses server side rendering (SSR)

@@ -7,7 +7,7 @@ export default function Header() {
       <div className="flex items-center gap-4">
         <WindowControls />
         <h1 className="text-2xl font-semibold text-blue-600 dark:text-blue-400">
-          Conjurer
+          Goggles
         </h1>
       </div>
       <div className="flex items-center gap-4">

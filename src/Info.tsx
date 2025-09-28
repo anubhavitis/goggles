@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import {
   useFormattedContractData,
   useBuyCreditsWithWait,
-} from "./hooks/useConjurerContract";
+} from "./hooks/useGogglesContract";
 import Header from "./components/Header";
 import ConnectPrompt from "./components/ConnectPrompt";
 import UserInfo from "./components/UserInfo";

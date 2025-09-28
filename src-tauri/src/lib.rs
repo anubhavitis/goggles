@@ -39,7 +39,7 @@ async fn maximize_window(window: tauri::Window) -> Result<(), String> {
 
 #[tauri::command]
 async fn update_config_address(address: String) -> Result<(), String> {
-    let mut config = watcher::config::ConjurerConfig::load()
+    let mut config = watcher::config::GogglesConfig::load()
         .map_err(|e| format!("Failed to load config: {}", e))?;
 
     config
@@ -52,7 +52,7 @@ async fn update_config_address(address: String) -> Result<(), String> {
 
 #[tauri::command]
 async fn get_config_address() -> Result<String, String> {
-    let config = watcher::config::ConjurerConfig::load()
+    let config = watcher::config::GogglesConfig::load()
         .map_err(|e| format!("Failed to load config: {}", e))?;
 
     Ok(config.address)
@@ -68,7 +68,7 @@ async fn get_finder_selection() -> Result<Vec<String>, String> {
 
 #[tauri::command]
 async fn process_image_with_ai(file_path: String) -> Result<String, String> {
-    let config = watcher::config::ConjurerConfig::load()
+    let config = watcher::config::GogglesConfig::load()
         .map_err(|e| format!("Failed to load config: {}", e))?;
 
     let ai = watcher::ai::OpenAI::new();
@@ -97,7 +97,7 @@ pub fn webview_window_builder(
 
     let window =
         WebviewWindowBuilder::new(app, window_name, WebviewUrl::External(url.parse().unwrap()))
-            .title("Conjurer App")
+            .title("Goggles App")
             .inner_size(width, height)
             .transparent(true)
             .decorations(false)
@@ -184,7 +184,7 @@ pub fn tray_setup(app: &tauri::App) -> Result<(), Box<(dyn std::error::Error + '
 pub async fn run() {
     // Start the daemon in a parallel thread when the app starts
     tokio::spawn(async {
-        info!("Starting Conjurer daemon in background...");
+        info!("Starting Goggles daemon in background...");
         watcher::daemon::run().await;
     });
 

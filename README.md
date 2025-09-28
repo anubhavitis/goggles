@@ -16,7 +16,7 @@ A multi-component application with a macOS desktop app, Express.js backend, and 
 ## Setup
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/anubhavitis/goggles.git
 cd goggles
 
 # Install dependencies

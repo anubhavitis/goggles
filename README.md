@@ -8,7 +8,6 @@ A multi-component application with a macOS desktop app, Express.js backend, and 
 
 ## Prerequisites
 
-- **Node.js** (v18+)
 - **Bun** - `curl -fsSL https://bun.sh/install | bash`
 - **Rust** - `curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh`
 - **Tauri CLI** - `cargo install tauri-cli`

@@ -2,7 +2,7 @@
   "lockfileVersion": 1,
   "workspaces": {
     "": {
-      "name": "conjurer",
+      "name": "goggles",
       "dependencies": {
         "@rainbow-me/rainbowkit": "^2.2.8",
         "@reown/walletkit": "^1.2.11",

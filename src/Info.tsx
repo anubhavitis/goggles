@@ -41,10 +41,10 @@ function Info() {
   }, [isConnected, address]);
 
   return (
-    <div className="h-screen flex flex-col bg-transparent">
+    <div className="p-2 h-screen flex flex-col bg-white rounded-lg">
       <Header />
-      <div className="h-full overflow-y-scroll flex flex-col bg-transparent">
-        <main className="flex-1 overflow-y-scroll p-8 bg-transparent">
+      <div className="h-full overflow-y-scroll flex flex-col bg-white">
+        <main className="flex-1 overflow-y-scroll p-8 bg-white">
           <div className="max-w-4xl mx-auto">
             {!isConnected ? (
               <ConnectPrompt />

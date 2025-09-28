@@ -99,19 +99,9 @@ pub fn webview_window_builder(
         WebviewWindowBuilder::new(app, window_name, WebviewUrl::External(url.parse().unwrap()))
             .title("Goggles App")
             .inner_size(width, height)
-            .transparent(true)
             .decorations(false)
             .build()
             .expect("Failed to create window");
-
-    // Apply vibrancy effect
-    #[cfg(target_os = "macos")]
-    let _ = apply_vibrancy(
-        &window,
-        NSVisualEffectMaterial::HudWindow,
-        Some(NSVisualEffectState::Active),
-        Some(10.0),
-    );
 
     // Position the window
     #[cfg(not(target_os = "linux"))]

@@ -5,7 +5,6 @@ import { Chain } from "wagmi/chains";
 import { walletConnectWallet } from "@rainbow-me/rainbowkit/wallets";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import reactLogo from "./assets/react.svg";
 import Info from "./Info";
 import "./App.css";
 import "@rainbow-me/rainbowkit/styles.css";
@@ -21,39 +20,7 @@ function Home() {
     }
   }, [chainId, error]);
 
-  return (
-    <main className="container">
-      <h1>Welcome to Tauri + React</h1>
-
-      <div className="row">
-        <a href="https://vite.dev" target="_blank">
-          <img src="/vite.svg" className="logo vite" alt="Vite logo" />
-        </a>
-        <a href="https://tauri.app" target="_blank">
-          <img src="/tauri.svg" className="logo tauri" alt="Tauri logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <p>Click on the Tauri, Vite, and React logos to learn more.</p>
-
-      <div className="row">
-        <Link
-          to="/info"
-          style={{
-            padding: "10px 20px",
-            backgroundColor: "#007acc",
-            color: "white",
-            textDecoration: "none",
-            borderRadius: "5px",
-          }}
-        >
-          Go to Test Route
-        </Link>
-      </div>
-    </main>
-  );
+  return <main className="container">Goggles</main>;
 }
 
 const zeroGGalileoTestnetManual = {

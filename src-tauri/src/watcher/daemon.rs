@@ -67,7 +67,7 @@ pub async fn run() {
     let shutdown = Arc::new(AtomicBool::new(false));
     let shutdown_clone = shutdown.clone();
 
-    let conjurer_thread_handler = tokio::spawn(async move {
+    let goggles_thread_handler = tokio::spawn(async move {
         info!("Starting Goggles thread...");
         daemon(shutdown_clone).await;
     });
@@ -78,7 +78,7 @@ pub async fn run() {
             info!("Received shutdown signal. Shutting down...");
             shutdown.store(true, Ordering::Relaxed);
         }
-        _ = conjurer_thread_handler => {
+        _ = goggles_thread_handler => {
             error!("Goggles thread exited unexpectedly");
         }
     }

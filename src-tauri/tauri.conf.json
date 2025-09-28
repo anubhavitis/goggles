@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "conjurer",
+  "productName": "goggles",
   "version": "0.1.0",
-  "identifier": "com.anubhavitis.conjurer",
+  "identifier": "com.anubhavitis.goggles",
   "build": {
     "beforeDevCommand": "bun run dev",
     "devUrl": "http://localhost:1420",
@@ -12,8 +12,7 @@
   "app": {
     "windows": [
       {
-        "title": "conjurer-app",
-        "transparent": true,
+        "title": "goggles-app",
         "decorations": false,
         "width": 600,
         "height": 300,

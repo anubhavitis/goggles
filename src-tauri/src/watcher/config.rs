@@ -16,7 +16,7 @@ impl GogglesConfig {
 
     pub fn get_config_path() -> String {
         if let Some(home_dir) = dirs::home_dir() {
-            let config_dir = home_dir.join(".conjurer");
+            let config_dir = home_dir.join(".goggles");
             if !config_dir.exists() {
                 let _ = fs::create_dir_all(&config_dir);
             }

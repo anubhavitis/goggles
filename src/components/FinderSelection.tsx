@@ -57,14 +57,14 @@ export default function FinderSelection({
 
   return (
     <div
-      className={`bg-gradient-to-br from-white/15 to-white/5 dark:from-white/8 dark:to-white/3 backdrop-blur-xl border border-white/20 dark:border-white/10 rounded-3xl p-6 shadow-2xl shadow-black/10 dark:shadow-black/30 transition-all duration-300 hover:shadow-3xl hover:shadow-black/15 dark:hover:shadow-black/40 hover:-translate-y-0.5 ${className}`}
+      className={`bg-white border border-black rounded-3xl p-6 shadow-lg transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5 ${className}`}
     >
       {isError && (
-        <div className="mb-4 p-4 bg-gradient-to-r from-red-500/10 to-pink-500/10 border border-red-400/30 rounded-xl">
+        <div className="mb-4 p-4 bg-gray-100 border border-black rounded-xl">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-red-500/20 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
               <svg
-                className="w-4 h-4 text-red-600"
+                className="w-4 h-4 text-black"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -78,10 +78,8 @@ export default function FinderSelection({
               </svg>
             </div>
             <div>
-              <p className="text-sm font-semibold text-red-700 dark:text-red-300">
-                Error
-              </p>
-              <p className="text-xs text-red-600 dark:text-red-400">
+              <p className="text-sm font-semibold text-black">Error</p>
+              <p className="text-xs text-gray-600">
                 {error instanceof Error ? error.message : String(error)}
               </p>
             </div>
@@ -99,15 +97,14 @@ export default function FinderSelection({
               return (
                 <div
                   key={index}
-                  className="px-3 py-2 bg-white/80 dark:bg-gray-800/80 border border-gray-200 dark:border-gray-600 rounded-lg
-                   group backdrop-blur-sm"
+                  className="px-3 py-2 bg-white border border-black rounded-lg hover:bg-gray-100 transition-all duration-200 group"
                 >
                   <div className="flex items-center gap-2">
                     <div className="flex-1 min-w-0">
-                      <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate">
+                      <h4 className="text-sm font-semibold text-black truncate">
                         {fileName}
                       </h4>
-                      <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                      <p className="text-xs text-gray-600 truncate">
                         {filePath}
                       </p>
                     </div>
@@ -116,12 +113,12 @@ export default function FinderSelection({
                       disabled={processingFiles.has(path)}
                       className={`p-1.5 rounded-md transition-colors ${
                         processingFiles.has(path)
-                          ? "bg-yellow-500/20 text-yellow-600 cursor-not-allowed"
+                          ? "bg-gray-300 text-black cursor-not-allowed"
                           : processedFiles.has(path)
-                          ? "bg-green-500/20 text-green-600 hover:bg-green-500/30"
+                          ? "bg-gray-200 text-black hover:bg-gray-300"
                           : errorFiles.has(path)
-                          ? "bg-red-500/20 text-red-600 hover:bg-red-500/30"
-                          : "bg-blue-500/10 hover:bg-blue-500/20 text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 hover:cursor-pointer"
+                          ? "bg-gray-200 text-black hover:bg-gray-300"
+                          : "bg-gray-200 hover:bg-gray-300 text-black hover:cursor-pointer"
                       }`}
                       title={
                         processingFiles.has(path)
@@ -175,9 +172,9 @@ export default function FinderSelection({
         </div>
       ) : !isLoading && !error ? (
         <div className="text-center py-8">
-          <div className="w-16 h-16 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center mx-auto mb-4">
+          <div className="w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center mx-auto mb-4">
             <svg
-              className="w-8 h-8 text-gray-400"
+              className="w-8 h-8 text-gray-600"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -190,7 +187,7 @@ export default function FinderSelection({
               />
             </svg>
           </div>
-          <p className="text-gray-500 dark:text-gray-400 text-sm">
+          <p className="text-gray-600 text-sm">
             Select files in Finder to see them appear here automatically
           </p>
         </div>

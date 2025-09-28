@@ -24,21 +24,19 @@ export default function UserInfo({
   return (
     <div className="w-full max-w-md mx-auto flex flex-col gap-2">
       {/* Credits Display Card */}
-      <div className="rounded-xl p-4 border border-emerald-400/30 dark:border-emerald-400/20">
+      <div className="rounded-xl p-4 bg-white border border-black">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-sm font-medium text-emerald-600 mb-1">
-              Your Credits
-            </p>
-            <p className="text-3xl font-bold text-emerald-600 ">
+            <p className="text-sm font-medium text-black mb-1">Your Credits</p>
+            <p className="text-3xl font-bold text-black">
               {userCredits !== undefined && userCredits !== null
                 ? userCredits.toString()
                 : "0"}
             </p>
           </div>
-          <div className="w-12 h-12 rounded-full bg-emerald-500/20 flex items-center justify-center">
+          <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center">
             <svg
-              className="w-6 h-6 text-emerald-600 dark:text-emerald-400"
+              className="w-6 h-6 text-black"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -90,12 +88,12 @@ function BuyCreditsSection({
   return (
     <div className="flex">
       {/* Price Display */}
-      <div className="rounded-xl w-full flex justify-center items-center p-2 border border-blue-400/20 border-r-0 rounded-r-none">
+      <div className="rounded-xl bg-white w-full flex justify-center items-center p-2 border border-black border-r-0 rounded-r-none">
         <div className="w-full flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
               <svg
-                className="w-4 h-4 text-blue-600 dark:text-blue-400"
+                className="w-4 h-4 text-black"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -108,12 +106,12 @@ function BuyCreditsSection({
                 />
               </svg>
             </div>
-            <span className="text-sm font-medium text-white">
+            <span className="text-sm font-medium text-black">
               10 Credits Package
             </span>
           </div>
           <div className="text-right pr-2">
-            <p className="text-lg font-bold text-white">
+            <p className="text-lg font-bold text-black">
               {formattedPriceFor10Credits !== "0"
                 ? formattedPriceFor10Credits + " 0G"
                 : "Loading..."}
@@ -126,8 +124,8 @@ function BuyCreditsSection({
       <button
         onClick={onBuyCredits}
         disabled={!isConnected || isPending || isConfirming || !creditPrice}
-        className="w-fit group relative overflow-hidden bg-blue-600/80 hover:bg-blue-600
-         disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed text-white
+        className="w-fit group relative overflow-hidden bg-black hover:bg-gray-800
+         disabled:bg-gray-400 disabled:cursor-not-allowed text-white
           font-bold py-2 px-6 rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 
           transform hover:scale-[1.02] hover:cursor-pointer active:scale-[0.98] disabled:transform-none rounded-l-none"
       >
@@ -187,11 +185,11 @@ function BuyCreditsSection({
 
       {/* Status Messages */}
       {isSuccess && (
-        <div className="bg-gradient-to-r from-green-500/10 to-emerald-500/10 border border-green-400/30 rounded-xl p-4 animate-fade-in">
+        <div className="bg-gray-100 border border-black rounded-xl p-4 animate-fade-in">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
               <svg
-                className="w-4 h-4 text-green-600"
+                className="w-4 h-4 text-black"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -205,10 +203,8 @@ function BuyCreditsSection({
               </svg>
             </div>
             <div>
-              <p className="text-sm font-semibold text-green-700 dark:text-green-300">
-                Success!
-              </p>
-              <p className="text-xs text-green-600 dark:text-green-400">
+              <p className="text-sm font-semibold text-black">Success!</p>
+              <p className="text-xs text-gray-600">
                 Your credits have been added to your account.
               </p>
             </div>
@@ -217,11 +213,11 @@ function BuyCreditsSection({
       )}
 
       {isError && (
-        <div className="bg-gradient-to-r from-red-500/10 to-pink-500/10 border border-red-400/30 rounded-xl p-4 animate-fade-in">
+        <div className="bg-gray-100 border border-black rounded-xl p-4 animate-fade-in">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-red-500/20 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
               <svg
-                className="w-4 h-4 text-red-600"
+                className="w-4 h-4 text-black"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -235,10 +231,10 @@ function BuyCreditsSection({
               </svg>
             </div>
             <div>
-              <p className="text-sm font-semibold text-red-700 dark:text-red-300">
+              <p className="text-sm font-semibold text-black">
                 Transaction Failed
               </p>
-              <p className="text-xs text-red-600 dark:text-red-400">
+              <p className="text-xs text-gray-600">
                 Please check your connection and try again.
               </p>
             </div>

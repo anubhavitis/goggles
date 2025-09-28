@@ -31,7 +31,7 @@ const zeroGGalileoTestnet = defineChain({
 async function main() {
   console.log('\n=== Withdrawing Funds from Conjurer Contract ===');
 
-  if (!process.env.OWNER_PRIVATE_KEY) {
+  if (!process.env.PRIVATE_KEY) {
     throw new Error('Please set PRIVATE_KEY in your .env file');
   }
 
@@ -41,7 +41,7 @@ async function main() {
   }
   // Get contract address from command line argument
   const contractAddress = process.env.CONTRACT_ADDRESS;
-  const ownerAccount = privateKeyToAccount(process.env.OWNER_PRIVATE_KEY as `0x${string}`);
+  const ownerAccount = privateKeyToAccount(process.env.PRIVATE_KEY as `0x${string}`);
 
   // Get amount to spend from command line argument (optional, defaults to 0.001 ETH)
   const ethAmount = '0.001';

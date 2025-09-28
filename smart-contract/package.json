@@ -4,10 +4,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "deploy": "npx hardhat run scripts/deploy.ts --network baseSepolia",
-    "deploy:base": "npx hardhat run scripts/deploy.ts --network base",
-    "buy-credits": "npx hardhat run scripts/buyCredits.ts --network hardhat",
-    "get-credits": "npx hardhat run scripts/getCredits.ts --network hardhat"
+    "deploy": "npx hardhat run scripts/deploy.ts",
+    "build": "npx hardhat compile"
   },
   "keywords": [],
   "author": "",

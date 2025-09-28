@@ -31,15 +31,15 @@ const zeroGGalileoTestnet = defineChain({
 async function main() {
   console.log('\n=== Conjurer Contract Credit Management ===');
 
-  if (!process.env.OWNER_PRIVATE_KEY) {
-    throw new Error('Please set OWNER_PRIVATE_KEY in your .env file');
+  if (!process.env.PRIVATE_KEY) {
+    throw new Error('Please set PRIVATE_KEY in your .env file');
   }
 
   if (!process.env.BUYER_PRIVATE_KEY) {
     throw new Error('Please set BUYER_PRIVATE_KEY in your .env file');
   }
 
-  const ownerAccount = privateKeyToAccount(process.env.OWNER_PRIVATE_KEY as `0x${string}`);
+  const ownerAccount = privateKeyToAccount(process.env.PRIVATE_KEY as `0x${string}`);
   const buyerAccount = privateKeyToAccount(process.env.BUYER_PRIVATE_KEY as `0x${string}`);
   
   const contractAddress = process.env.CONTRACT_ADDRESS;

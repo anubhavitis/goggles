@@ -30,7 +30,7 @@ const zeroGGalileoTestnet = defineChain({
 async function main() {
   console.log('\n=== Starting Conjurer Contract Deployment ===');
 
-  if (!process.env.OWNER_PRIVATE_KEY) {
+  if (!process.env.PRIVATE_KEY) {
     throw new Error('Please set PRIVATE_KEY in your .env file');
   }
 
@@ -41,7 +41,7 @@ async function main() {
   });
 
   // Create wallet client from private key
-  const account = privateKeyToAccount(process.env.OWNER_PRIVATE_KEY as `0x${string}`);
+  const account = privateKeyToAccount(process.env.PRIVATE_KEY as `0x${string}`);
   const walletClient = createWalletClient({
     account,
     chain: chainToDeploy,
